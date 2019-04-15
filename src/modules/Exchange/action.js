@@ -1,6 +1,7 @@
 import {
   FETCH_EXCHANGE_RATE,
-  ADD_EXCHANGE_RATE
+  ADD_EXCHANGE_RATE,
+  DELETE_EXCHANGE_RATE
 } from './constant'
 
 const fetchExchangeRate = (data) => {
@@ -15,8 +16,15 @@ const addExchangeRate = (data) => {
     data: data
   })
 }
+const deleteExchangeRate = (data) => {
+  return ({
+    type: DELETE_EXCHANGE_RATE,
+    data: data
+  })
+}
 
 export {
   fetchExchangeRate,
-  addExchangeRate
+  addExchangeRate,
+  deleteExchangeRate
 }

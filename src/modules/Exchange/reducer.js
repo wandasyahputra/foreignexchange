@@ -1,6 +1,7 @@
 import {
   FETCH_EXCHANGE_RATE,
-  ADD_EXCHANGE_RATE
+  ADD_EXCHANGE_RATE,
+  DELETE_EXCHANGE_RATE
 } from './constant'
 
 
@@ -20,6 +21,14 @@ const exchangeRate = (state = initialState, action) => {
         data: {
           ...state.data,
           rate: Object.assign(state.data.rate, action.data.rate)
+        }
+      }
+    }
+    case DELETE_EXCHANGE_RATE: {
+      delete state.data.rate[action.data]
+      return {
+        data: {
+          ...state.data,
         }
       }
     }

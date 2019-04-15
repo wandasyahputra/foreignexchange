@@ -9,7 +9,8 @@ import { FETCH_LATEST_RATE } from 'url/index'
 
 import {
   fetchExchangeRate,
-  addExchangeRate
+  addExchangeRate,
+  deleteExchangeRate
 } from './action'
 import { CURRENCY_LIST } from './constant'
 
@@ -130,6 +131,7 @@ const mapStateToProps = ({ exchangeRate }) => ({
 
 const mapDispatchToProps = dispatch => ({
   fetchExchangeRate: (data) => dispatch(fetchExchangeRate(data)),
-  addExchangeRate: (data) => dispatch(addExchangeRate(data))
+  addExchangeRate: (data) => dispatch(addExchangeRate(data)),
+  deleteExchangeRate: (data) => dispatch(deleteExchangeRate(data))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Exchange)
