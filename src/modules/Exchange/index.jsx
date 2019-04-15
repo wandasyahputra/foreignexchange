@@ -7,21 +7,20 @@ import ErrorPage from 'commons/ui-kit/ErrorPage'
 import Toast from 'commons/ui-kit/Toast'
 import { FETCH_LATEST_RATE } from 'url/index'
 
-import fetchUserAlbum from './action'
+import {
+  fetchExchangeRate,
+  addExchangeRate
+} from './action'
 import { CURRENCY_LIST } from './constant'
 
 
 class Exchange extends Component {
   static propTypes = {
-    albumList: PropTypes.arrayOf(PropTypes.object),
-    validUntil: PropTypes.number,
-    id: PropTypes.number
+    exchangeRateList: PropTypes.objectOf(PropTypes.any)
   }
 
   static defaultProps = {
-    albumList: [],
-    validUntil: 0,
-    id: -1
+    exchangeRateList: {}
   }
 
 
@@ -31,8 +30,8 @@ class Exchange extends Component {
       isLoading: false,
       isError: false,
       showToast: false,
-      baseCurrency: CURRENCY_LIST[0],
-      selectedCurrency: [CURRENCY_LIST[1],CURRENCY_LIST[2],CURRENCY_LIST[3]],
+      baseCurrency: CURRENCY_LIST[0].code,
+      selectedCurrency: [CURRENCY_LIST[1].code,CURRENCY_LIST[2].code,CURRENCY_LIST[3].code],
       type: '',
       msg: '',
       lastMethod: 'refresh'
@@ -47,10 +46,11 @@ class Exchange extends Component {
   }
 
   fetchRemoteData = (currency, mode) => async () => {
+    console.log('here')
     const { baseCurrency } = this.state
     this.setState(this.loadingState)
     try {
-      const res = await axios({ method: "get", url: FETCH_LATEST_RATE(currency.join(','), baseCurrency) })
+      const res = await axios({ method: "get", url: FETCH_LATEST_RATE(baseCurrency, currency.join(',')) })
       this.onDataFetched(res.data, mode)
     } catch (e) {
       console.error(e);
@@ -79,12 +79,15 @@ class Exchange extends Component {
     })
   }
 
-  onDataFetched = data => {
-    const { userId, fetchUserAlbum } = this.props
-    fetchUserAlbum(data, Date.now() + 300000, userId)
+  onDataFetched = (data, mode) => {
+    const { fetchExchangeRate, addExchangeRate } = this.props
     this.setState({
       isLoading: false
     })
+    if (mode === 'refresh') {
+      return fetchExchangeRate(data, Date.now() + 300000)
+    }
+    return addExchangeRate(data)
   }
 
 
@@ -92,7 +95,7 @@ class Exchange extends Component {
     const { validUntil } = this.props
     const { selectedCurrency } = this.state
     if (validUntil < Date.now()) {
-      this.fetchRemoteData(selectedCurrency, 'refresh')
+      this.fetchRemoteData(selectedCurrency, 'refresh')()
     }
   }
 
@@ -113,7 +116,7 @@ class Exchange extends Component {
     return (
       <React.Fragment>
         {!isLoading && isError && (
-          <ErrorPage reFetch={this.fetchRemoteData(selectedCurrency, lastMethod)}  />
+          <ErrorPage reFetch={this.fetchRemoteData(selectedCurrency, lastMethod)()}  />
         )}
         {showToast && <Toast type={type} msg={msg} />}
       </React.Fragment>
@@ -121,12 +124,12 @@ class Exchange extends Component {
   }
 }
 
-const mapStateToProps = ({ album }) => ({
-  albumList: album.data,
-  validUntil: album.valiUntil
+const mapStateToProps = ({ exchangeRate }) => ({
+  exchangeRateList: exchangeRate.data
 })
 
 const mapDispatchToProps = dispatch => ({
-  fetchUserAlbum: (data, validUntil, id) => dispatch(fetchUserAlbum(data, validUntil, id))
+  fetchExchangeRate: (data) => dispatch(fetchExchangeRate(data)),
+  addExchangeRate: (data) => dispatch(addExchangeRate(data))
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Exchange)

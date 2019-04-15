@@ -1,19 +1,26 @@
-import { FETCH_ALBUM } from './constant'
+import {
+  FETCH_EXCHANGE_RATE,
+  ADD_EXCHANGE_RATE
+} from './constant'
 
 
 const initialState = {
-  data: [],
-  validUntil: 0,
-  id: -1
+  data: {}
 }
 
-const userAlbum = (state = initialState, action) => {
+const exchangeRate = (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_ALBUM: {
+    case FETCH_EXCHANGE_RATE: {
       return {
-        data: action.data,
-        validUntil: action.validUntil,
-        id: action.id
+        data: action.data
+      }
+    }
+    case ADD_EXCHANGE_RATE: {
+      return {
+        data: {
+          ...state.data,
+          rate: Object.assign(state.data.rate, action.data.rate)
+        }
       }
     }
     default: {
@@ -22,4 +29,4 @@ const userAlbum = (state = initialState, action) => {
   }
 }
 
-export default userAlbum
+export default exchangeRate
