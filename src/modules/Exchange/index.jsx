@@ -7,12 +7,16 @@ import ErrorPage from 'commons/ui-kit/ErrorPage'
 import Toast from 'commons/ui-kit/Toast'
 import { FETCH_LATEST_RATE } from 'url/index'
 
+import CurrencyInput from './Components/CurrencyInput'
 import {
   fetchExchangeRate,
   addExchangeRate,
   deleteExchangeRate
 } from './action'
 import { CURRENCY_LIST } from './constant'
+import {
+  Header
+} from './style'
 
 
 class Exchange extends Component {
@@ -30,9 +34,10 @@ class Exchange extends Component {
     this.state = {
       isLoading: false,
       isError: false,
-      showToast: false,
-      baseCurrency: CURRENCY_LIST[0].code,
+      baseCurrency: CURRENCY_LIST[0],
       selectedCurrency: [CURRENCY_LIST[1].code,CURRENCY_LIST[2].code,CURRENCY_LIST[3].code],
+      value: 10,
+      showToast: false,
       type: '',
       msg: '',
       lastMethod: 'refresh'
@@ -47,11 +52,10 @@ class Exchange extends Component {
   }
 
   fetchRemoteData = (currency, mode) => async () => {
-    console.log('here')
     const { baseCurrency } = this.state
     this.setState(this.loadingState)
     try {
-      const res = await axios({ method: "get", url: FETCH_LATEST_RATE(baseCurrency, currency.join(',')) })
+      const res = await axios({ method: "get", url: FETCH_LATEST_RATE(baseCurrency.code, currency.join(',')) })
       this.onDataFetched(res.data, mode)
     } catch (e) {
       console.error(e);
@@ -64,6 +68,13 @@ class Exchange extends Component {
     }
   }
 
+
+  /**
+   * Show Toast.
+   *
+   * @param  {String} msg    Message to show.
+   * @param  {String} type   Type of message, 'fail' or 'success'.
+   */
   toggleShowToast = (msg, type) => {
     this.setState({
       showToast: true,
@@ -91,11 +102,34 @@ class Exchange extends Component {
     return addExchangeRate(data)
   }
 
+  /**
+   * handling baseCurrency change.
+   *
+   * @param  {Object} event    Event from onChange of dropdown.
+   */
+  baseChange = event => {
+    const { selectedCurrency } = this.state
+    const newBase = CURRENCY_LIST.filter((item)=> {
+      return item.code === event.target.value
+    })
+    this.setState({baseCurrency: newBase[0]},
+      () => this.fetchRemoteData(selectedCurrency, 'refresh')()
+    )
+  }
+
+  /**
+   * handling value input Currency change.
+   *
+   * @param  {Object} event    Event from onChange of input.
+   */
+  valueChange = event => {
+    this.setState({value: event.target.value})
+  }
 
   componentDidMount() {
     const { validUntil } = this.props
-    const { selectedCurrency } = this.state
-    if (validUntil < Date.now()) {
+    const { selectedCurrency, isError, isLoading } = this.state
+    if (validUntil < Date.now() && !isError && !isLoading) {
       this.fetchRemoteData(selectedCurrency, 'refresh')()
     }
   }
@@ -105,10 +139,11 @@ class Exchange extends Component {
     //   exchangeRateList
     // } = this.props
     const {
-      // baseCurrency,
+      baseCurrency,
       selectedCurrency,
-      showToast,
       lastMethod,
+      value,
+      showToast,
       type,
       msg,
       isLoading,
@@ -116,8 +151,18 @@ class Exchange extends Component {
     } = this.state
     return (
       <React.Fragment>
+        <Header>
+          <CurrencyInput
+            base={baseCurrency}
+            currencyList={CURRENCY_LIST}
+            baseChange={this.baseChange}
+            value={value}
+            valueChange={this.valueChange}
+          />
+        </Header>
+        {/* <ItemList /> */}
         {!isLoading && isError && (
-          <ErrorPage reFetch={this.fetchRemoteData(selectedCurrency, lastMethod)()}  />
+          <ErrorPage reFetch={this.fetchRemoteData(selectedCurrency, lastMethod)}  />
         )}
         {showToast && <Toast type={type} msg={msg} />}
       </React.Fragment>

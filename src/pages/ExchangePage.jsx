@@ -6,14 +6,22 @@ import Exchange from 'modules/Exchange'
 const ExchangePage = (props) => {
   const Content = styled.div`
     color: ${props => props.theme.primaryTextColor};
+    display: block;
+    max-width: 500px;
+    min-height: 100vh;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
   `
   const Title = styled.div`
-    font-size: 28px;
-    margin: 5px 20px;
+    font-size: 10px;
+    margin: 10px 0px;
+    width: 100%;
+    text-align: center;
   `
   return (
     <Content>
-      <Title>ExchangePage</Title>
+      <Title>Foreign Exchange</Title>
       <Exchange />
     </Content>
   )
