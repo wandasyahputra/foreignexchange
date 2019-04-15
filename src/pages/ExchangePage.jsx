@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import Exchange from 'modules/Exchange'
+
 const ExchangePage = (props) => {
   const Content = styled.div`
     color: ${props => props.theme.primaryTextColor};
@@ -12,6 +14,7 @@ const ExchangePage = (props) => {
   return (
     <Content>
       <Title>ExchangePage</Title>
+      <Exchange />
     </Content>
   )
 }
