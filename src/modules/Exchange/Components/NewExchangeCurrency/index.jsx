@@ -16,6 +16,11 @@ const NewExchangeCurrency = (props) => {
 
   const changeInputValue = event => {
     inputValue = event.target.value
+    console.log(inputValue)
+  }
+
+  const postValue = () => {
+    addExchangeCurrency(inputValue)()
   }
   
   return (
@@ -33,7 +38,7 @@ const NewExchangeCurrency = (props) => {
           </select>
         </div>
         <div>
-          <div onClick={addExchangeCurrency(inputValue)} className="check">✔</div>
+          <div onClick={postValue} className="check">✔</div>
           <div onClick={changeRenderOption(false)} className="cancel">✖</div>
         </div>
       </React.Fragment>
