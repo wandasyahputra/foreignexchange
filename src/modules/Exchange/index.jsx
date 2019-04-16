@@ -39,7 +39,7 @@ class Exchange extends Component {
       baseCurrency: CURRENCY_LIST[0],
       selectedCurrency: [CURRENCY_LIST[1].code,CURRENCY_LIST[2].code,CURRENCY_LIST[3].code],
       value: 10,
-      renderOption: true,
+      renderOption: false,
       showToast: false,
       type: '',
       msg: '',
