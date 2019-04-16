@@ -224,7 +224,7 @@ class Exchange extends Component {
     // get key and convert to array due to exchangeRateList is a object
     const key = Object.keys(exchangeRateList)
 
-    return key.map((item) => {
+    return key.map((item, key) => {
       // finding currency name in constant CURRENCY_LIST by exchangeRateList key
       const currencyInformation = CURRENCY_LIST.filter((currency) => {
         return currency.code === item
@@ -232,6 +232,7 @@ class Exchange extends Component {
       Object.assign(currencyInformation, {code: item, rate: exchangeRateList[item]})
       return (
         <ForeignRateCard
+          key={key}
           baseCode={baseCurrency.code}
           currency={currencyInformation}
           value={value}
@@ -259,7 +260,6 @@ class Exchange extends Component {
       isLoading,
       isError
     } = this.state
-    console.log(this.state)
     return (
       <React.Fragment>
         <Header>

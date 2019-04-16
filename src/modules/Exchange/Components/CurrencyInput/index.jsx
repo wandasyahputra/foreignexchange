@@ -16,9 +16,9 @@ const CurrencyInput = (props) => {
   return (
     <Container {...rest} >
       <div>{base.code} - {base.name}</div>
-      <select onChange={baseChange}>
+      <select onChange={baseChange} defaultValue={base.code}>
         {currencyList.map((item, key) => (
-          <option key={toString(key)} selected={item.code === base.code}>{item.code}</option>
+          <option key={key}>{item.code}</option>
         ))}
       </select>
       <input type="number" min="0" value={value} onChange={valueChange} />

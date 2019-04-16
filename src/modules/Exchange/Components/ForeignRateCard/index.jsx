@@ -35,7 +35,7 @@ ForeignRateCard.defaultProps = {
 ForeignRateCard.propTypes = {
   value: PropTypes.number,
   baseCode: PropTypes.string.isRequired,
-  currency: PropTypes.objectOf(PropTypes.any).isRequired,
+  currency: PropTypes.arrayOf(PropTypes.any).isRequired,
   deleteExchangeRate: PropTypes.func.isRequired
 }
 

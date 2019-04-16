@@ -1,14 +1,13 @@
-# CURRENCY INPUT DOCUMENTATION
+# NEW EXCHANGE CURRENCY DOCUMENTATION
 
 ## API
 
 | Property | Description | Type | Default | Required |
 | -------- | ----------- | ---- | ------- | -------- |
-| base | set selected currency  | `object` | - | - |
-| baseChange | set the handler to handle base change dropdown | `function` | - | Yes |
-| value | set default value of input | `number` | `0` | - |
-| valueChange | set the handler to handle input value change | `function` | - | Yes |
-| currencyList | array of available currency | `array` | - | - |
+| renderOption | set option is rendered or not| `bool` | false | - |
+| changeRenderOption | turn option rendered or not | `function` | - | Yes |
+| restExchangeCurrency | list of currency to add | `array` | [] | - |
+| addExchangeCurrency | set the handler to handle input new currency | `function` | - | Yes |
 
 ## EXAMPLE
 
@@ -18,11 +17,10 @@ const CURRENCY_LIST = [
   {code: 'IDR', name: 'Indonesia Rupiah'}
 ]
 
-<CurrencyInput
-  base={CURRENCY_LIST[0]}
-  currencyList={CURRENCY_LIST}
-  baseChange={this.baseChange}
-  value='10'
-  valueChange={this.valueChange}
+<NewExchangeCurrency
+  renderOption={false}
+  changeRenderOption={this.changeRenderOption}
+  restExchangeCurrency={CURRENCY_LIST}
+  addExchangeCurrency={this.addExchangeCurrency}
 />
 ```

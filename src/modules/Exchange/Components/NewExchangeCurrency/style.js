@@ -11,6 +11,9 @@ const Container = styled.div`
   text-align:left;
   display: flex;
   align-items: center;
+  & > .default {
+    cursor: pointer;
+  }
   
   & > .options {
     flex-grow: 1;
@@ -30,6 +33,7 @@ const Container = styled.div`
     background: #d40000;
     text-align: center;
     border-radius: 50%;
+    cursor: pointer;
   }
   & .check {
     display:inline-block;
@@ -42,6 +46,7 @@ const Container = styled.div`
     background: #5abd41;
     text-align: center;
     border-radius: 50%;
+    cursor: pointer;
 
   }
   

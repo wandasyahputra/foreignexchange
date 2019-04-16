@@ -26,7 +26,7 @@ const Container = styled.div`
     background: #d40000;
     text-align: center;
     border-radius: 50%;
-
+    cursor: pointer;
   }
 
   & .highlight {

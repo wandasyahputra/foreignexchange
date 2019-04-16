@@ -21,39 +21,37 @@ const NewExchangeCurrency = (props) => {
   return (
     <Container {...rest} >
       {!renderOption && (
-        <div onClick={changeRenderOption(true)}>Add more currency</div>
+        <div className='default' onClick={changeRenderOption(true)}>Add more currency</div>
       )}
-      <div className="options">
       {renderOption && (
-        <select onChange={changeInputValue}>
-          {restExchangeCurrency.map((item, key) => (
-            <option>{item.code}</option>
-          ))}
-        </select>
+      <React.Fragment>
+        <div className="options">
+          <select onChange={changeInputValue} defaultValue={inputValue}>
+            {restExchangeCurrency.map((item, key) => (
+              <option key={key}>{item.code}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <div onClick={addExchangeCurrency(inputValue)} className="check">✔</div>
+          <div onClick={changeRenderOption(false)} className="cancel">✖</div>
+        </div>
+      </React.Fragment>
       )}
-      </div>
-      <div>
-        <div onClick={addExchangeCurrency(inputValue)} className="check">✔</div>
-        <div onClick={changeRenderOption(false)} className="cancel">✖</div>
-      </div>
     </Container>
   )
 }
 
 NewExchangeCurrency.defaultProps = {
-  base: {},
-  baseChange: undefined,
-  value: 10,
-  valueChange: undefined,
-  currencyList: []
+  restExchangeCurrency: [],
+  renderOption: false,
 }
 
 NewExchangeCurrency.propTypes = {
-  base: PropTypes.objectOf(PropTypes.any),
-  baseChange: PropTypes.func.isRequired,
-  value: PropTypes.number,
-  valueChange: PropTypes.func.isRequired,
-  currencyList: PropTypes.arrayOf(PropTypes.any)
+  restExchangeCurrency: PropTypes.arrayOf(PropTypes.any),
+  renderOption: PropTypes.bool,
+  changeRenderOption: PropTypes.func.isRequired,
+  addExchangeCurrency: PropTypes.func.isRequired,
 }
 
 export default NewExchangeCurrency
