@@ -21,7 +21,7 @@ const CurrencyInput = (props) => {
           <option key={toString(key)} selected={item.code === base.code}>{item.code}</option>
         ))}
       </select>
-      <input type="text" value={value} onChange={valueChange} />
+      <input type="number" min="0" value={value} onChange={valueChange} />
     </Container>
   )
 }

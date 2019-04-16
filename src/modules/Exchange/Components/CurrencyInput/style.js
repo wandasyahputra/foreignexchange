@@ -27,6 +27,11 @@ const Container = styled.div`
     font-size: 20px;
     text-align: right;
   }
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+  }
 `
 
 export default Container

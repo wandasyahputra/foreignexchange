@@ -8,6 +8,7 @@ import Toast from 'commons/ui-kit/Toast'
 import { FETCH_LATEST_RATE } from 'url/index'
 
 import CurrencyInput from './Components/CurrencyInput'
+import ForeignRateCard from './Components/ForeignRateCard'
 import {
   fetchExchangeRate,
   addExchangeRate,
@@ -27,7 +28,6 @@ class Exchange extends Component {
   static defaultProps = {
     exchangeRateList: {}
   }
-
 
   constructor(props) {
     super(props)
@@ -123,21 +123,77 @@ class Exchange extends Component {
    * @param  {Object} event    Event from onChange of input.
    */
   valueChange = event => {
+    if (event.target.value !== '' && event.target.value > -0.1 )
     this.setState({value: event.target.value})
   }
 
+  /**
+   * handling delete exchange currency.
+   *
+   * @param  {String} code    currency code to be delete.
+   */
+  deleteExchange = code => () => {
+    const { selectedCurrency } = this.state
+    const { deleteExchangeRate } = this.props
+    const newSelectedCurrency = []
+    
+    // remove from redux
+    deleteExchangeRate(code)
+
+    // remove from state
+    for (let i = 0; i < selectedCurrency.length; i +=1) {
+      if (selectedCurrency[i].code !== code) {
+        newSelectedCurrency.push(selectedCurrency[i])
+      }
+    }
+    this.setState({
+      selectedCurrency: newSelectedCurrency
+    })
+  }
+
   componentDidMount() {
-    const { validUntil } = this.props
-    const { selectedCurrency, isError, isLoading } = this.state
-    if (validUntil < Date.now() && !isError && !isLoading) {
+    const { exchangeRateList } = this.props
+    const { selectedCurrency} = this.state
+    const exchangeRateKeys = Object.keys(exchangeRateList)
+    if (exchangeRateKeys.length === 0 && selectedCurrency.length > 0) {
       this.fetchRemoteData(selectedCurrency, 'refresh')()
     }
   }
 
+  /**
+   * render for exchange currency Card.
+   *
+   * @param   {Object}    exchangeRateList    list of exchange currency from redux.
+   * @return  {Component} Card currency.
+   */
+  renderForeignRate = (exchangeRateList) => {
+    const { baseCurrency, value } = this.state
+    
+    // get key and convert to array due to exchangeRateList is a object
+    const key = Object.keys(exchangeRateList)
+
+    return key.map((item) => {
+      // finding currency name in constant CURRENCY_LIST by exchangeRateList key
+      const currencyInformation = CURRENCY_LIST.filter((currency) => {
+        return currency.code === item
+      })
+      Object.assign(currencyInformation, {code: item, rate: exchangeRateList[item]})
+      return (
+        <ForeignRateCard
+          baseCode={baseCurrency.code}
+          currency={currencyInformation}
+          value={value}
+          deleteExchangeRate={this.deleteExchange(item)}
+        />
+      )
+    }
+    )
+  }
+
   render() {
-    // const {
-    //   exchangeRateList
-    // } = this.props
+    const {
+      exchangeRateList
+    } = this.props
     const {
       baseCurrency,
       selectedCurrency,
@@ -160,7 +216,7 @@ class Exchange extends Component {
             valueChange={this.valueChange}
           />
         </Header>
-        {/* <ItemList /> */}
+        {this.renderForeignRate(exchangeRateList)}
         {!isLoading && isError && (
           <ErrorPage reFetch={this.fetchRemoteData(selectedCurrency, lastMethod)}  />
         )}
@@ -171,7 +227,7 @@ class Exchange extends Component {
 }
 
 const mapStateToProps = ({ exchangeRate }) => ({
-  exchangeRateList: exchangeRate.data
+  exchangeRateList: exchangeRate.data.rates
 })
 
 const mapDispatchToProps = dispatch => ({
