@@ -20,7 +20,7 @@ const exchangeRate = (state = initialState, action) => {
       return {
         data: {
           ...state.data,
-          rate: Object.assign(state.data.rates, action.data.rates)
+          rates: Object.assign(state.data.rates, action.data.rates)
         }
       }
     }

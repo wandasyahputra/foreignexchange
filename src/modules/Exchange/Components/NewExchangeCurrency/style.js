@@ -11,11 +11,15 @@ const Container = styled.div`
   text-align:left;
   display: flex;
   align-items: center;
-  & > div:first-of-type {
+  
+  & > .options {
     flex-grow: 1;
   }
+  & > div:not(.options) {
+    flex-direction:column;
+  }
 
-  & .removeButton {
+  & .cancel {
     display:inline-block;
     height: 20px;
     width: 20px;
@@ -26,19 +30,30 @@ const Container = styled.div`
     background: #d40000;
     text-align: center;
     border-radius: 50%;
+  }
+  & .check {
+    display:inline-block;
+    height: 20px;
+    width: 20px;
+    margin: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    background: #5abd41;
+    text-align: center;
+    border-radius: 50%;
 
   }
-
-  & .highlight {
-    font-size: 14px;
-    font-weight: 500;
-    display: flex;
-    & > div {
-      flex-grow: 1;
-      text-align: left;
-      &:last-of-type {
-        text-align: right;
-      }
+  
+  select {
+    background: none;
+    color: ${props => props.theme.primaryTextColor};
+    border: none;
+    width: 30%;
+    font-size: 15px;
+    outline: none;
+    option {
+      color: ${props => props.theme.secondaryTextColor};
     }
   }
 `

@@ -12,7 +12,6 @@ const ForeignRateCard = (props) => {
     deleteExchangeRate,
     ...rest
   } = props
-  console.log(props)
 
   return (
     <Container {...rest} >
@@ -24,7 +23,7 @@ const ForeignRateCard = (props) => {
         <div>{currency.code} - {currency[0].name}</div>
         <div>1 {baseCode} = {currency.rate}</div>
       </div>
-      <div className="removeButton" onClick={deleteExchangeRate}>-</div>
+      <div className="removeButton" onClick={deleteExchangeRate}>✖</div>
     </Container>
   )
 }

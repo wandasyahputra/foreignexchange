@@ -9,6 +9,7 @@ import { FETCH_LATEST_RATE } from 'url/index'
 
 import CurrencyInput from './Components/CurrencyInput'
 import ForeignRateCard from './Components/ForeignRateCard'
+import NewExchangeCurrency from './Components/NewExchangeCurrency'
 import {
   fetchExchangeRate,
   addExchangeRate,
@@ -28,15 +29,17 @@ class Exchange extends Component {
   static defaultProps = {
     exchangeRateList: {}
   }
-
+  
   constructor(props) {
     super(props)
     this.state = {
+      exchangeRateList: {},
       isLoading: false,
       isError: false,
       baseCurrency: CURRENCY_LIST[0],
       selectedCurrency: [CURRENCY_LIST[1].code,CURRENCY_LIST[2].code,CURRENCY_LIST[3].code],
       value: 10,
+      renderOption: true,
       showToast: false,
       type: '',
       msg: '',
@@ -45,12 +48,13 @@ class Exchange extends Component {
     }
   }
 
+  
   loadingState = {
     isLoading: true,
     isError: false,
     showToast: false
   }
-
+  
   fetchRemoteData = (currency, mode) => async () => {
     const { baseCurrency } = this.state
     this.setState(this.loadingState)
@@ -67,7 +71,40 @@ class Exchange extends Component {
       this.toggleShowToast('Failed to connect to server', 'failed')
     }
   }
+  
+  onDataFetched = (data, mode) => {
+    const { fetchExchangeRate, addExchangeRate } = this.props
+    if (mode === 'refresh') {
+      fetchExchangeRate(data, Date.now() + 300000)
+    } else {
+      addExchangeRate(data)
+    }
+    return this.setState({
+      isLoading: false
+    })
+  }
 
+  // static getDerivedStateFromProps(props, state) {
+  //   if (props.exchangeRateList !== state.exchangeRateList) {
+  //     return {
+  //       exchangeRateList: props.exchangeRateList
+  //     }
+  //   }
+  //   return null
+  // }
+  
+  /**
+   * Check currency not selected yet.
+   *
+   * @param  {array} currencyList     List array of object of supported currency.
+   * @param  {array} selectedCurrency List array of already selected currency.
+   * @return  {array} currency that not selected yet.
+   */
+  checkRestCurrency = (currencyList, selectedCurrency) => {
+    return currencyList.filter((currency) => {
+      return selectedCurrency.join(" ").indexOf(currency.code) < 0
+    })
+  }
 
   /**
    * Show Toast.
@@ -89,17 +126,6 @@ class Exchange extends Component {
         })
       }, 3000)
     })
-  }
-
-  onDataFetched = (data, mode) => {
-    const { fetchExchangeRate, addExchangeRate } = this.props
-    this.setState({
-      isLoading: false
-    })
-    if (mode === 'refresh') {
-      return fetchExchangeRate(data, Date.now() + 300000)
-    }
-    return addExchangeRate(data)
   }
 
   /**
@@ -128,6 +154,15 @@ class Exchange extends Component {
   }
 
   /**
+   * handling value input Currency change.
+   *
+   * @param  {Object} event    Event from onChange of input.
+   */
+  changeRenderOption = value => () => {
+    this.setState({renderOption: value})
+  }
+
+  /**
    * handling delete exchange currency.
    *
    * @param  {String} code    currency code to be delete.
@@ -148,6 +183,23 @@ class Exchange extends Component {
     }
     this.setState({
       selectedCurrency: newSelectedCurrency
+    })
+  }
+
+  /**
+   * handling add exchange currency.
+   *
+   * @param  {String} code    currency code to be added.
+   */
+  addExchangeCurrency = code => () => {
+    const { selectedCurrency } = this.state
+    this.setState({
+      isLoading: true
+    })
+    this.fetchRemoteData([code], 'adding')()
+    selectedCurrency.push(code)
+    this.setState({
+      selectedCurrency
     })
   }
 
@@ -195,16 +247,19 @@ class Exchange extends Component {
       exchangeRateList
     } = this.props
     const {
+      // exchangeRateList,
       baseCurrency,
       selectedCurrency,
       lastMethod,
       value,
+      renderOption,
       showToast,
       type,
       msg,
       isLoading,
       isError
     } = this.state
+    console.log(this.state)
     return (
       <React.Fragment>
         <Header>
@@ -216,7 +271,15 @@ class Exchange extends Component {
             valueChange={this.valueChange}
           />
         </Header>
-        {this.renderForeignRate(exchangeRateList)}
+        {exchangeRateList !== {} && (
+          this.renderForeignRate(exchangeRateList)
+        )}
+        <NewExchangeCurrency
+          renderOption={renderOption}
+          changeRenderOption={this.changeRenderOption}
+          restExchangeCurrency={this.checkRestCurrency(CURRENCY_LIST, selectedCurrency)}
+          addExchangeCurrency={this.addExchangeCurrency}
+        />
         {!isLoading && isError && (
           <ErrorPage reFetch={this.fetchRemoteData(selectedCurrency, lastMethod)}  />
         )}
