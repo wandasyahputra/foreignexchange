@@ -19,7 +19,7 @@ const addExchangeRate = (data) => {
 const deleteExchangeRate = (data) => {
   return ({
     type: DELETE_EXCHANGE_RATE,
-    data: data
+    data
   })
 }
 

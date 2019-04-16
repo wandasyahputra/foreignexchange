@@ -20,12 +20,12 @@ const exchangeRate = (state = initialState, action) => {
       return {
         data: {
           ...state.data,
-          rate: Object.assign(state.data.rate, action.data.rate)
+          rates: Object.assign(state.data.rates, action.data.rates)
         }
       }
     }
     case DELETE_EXCHANGE_RATE: {
-      delete state.data.rate[action.data]
+      delete state.data.rates[action.data]
       return {
         data: {
           ...state.data,
